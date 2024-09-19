@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, onBeforeUnmount } from 'vue'
-import { io, type Socket } from "socket.io-client"
-import { useRouter } from 'vue-router';
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+
+// Define types for message
 type Message = {
   text: string
   name?: string
@@ -9,19 +9,8 @@ type Message = {
   sender: "user" | "friend"
 }
 
-// 
-const socket = ref<Socket>()
-const router = useRouter()
-const rooms = ['vue installation', 'vue guide', 'vue api', 'vue examples']
-const state = reactive({
-  username: '',
-  room: rooms[0]
-})
-const onSubmit = () => {
-  console.log("SUBMIT")
-  router.push(`/chats?username=${state.username}&room=${state.room}`)
-}
 const newMessage = ref("")
+// Reactive list of messages
 const messages = ref<Message[]>([
   {
     text: "Hey! How are you?",
@@ -29,41 +18,46 @@ const messages = ref<Message[]>([
     name: "Script",
     timeStamp: "10:02",
   },
+  {
+    text: "I am good, thanks! What about you?",
+    sender: "user",
+    name: "",
+    timeStamp: "10:02",
+  },
+  {
+    text: "I am very fine?",
+    sender: "friend",
+    name: "Bode Thomas",
+    timeStamp: "10:02",
+  },
+  {
+    text: "So, I have this bug i want to fix, are you free for  a quick call?",
+    sender: "friend",
+    name: "Transfer XO Rep ",
+    timeStamp: "10:02",
+  },
 ])
 
 const sendMessage = () => {
-
-  console.log(newMessage.value)
-  // if (newMessage.value.trim() !== "") {
-  //   messages.value.push({
-  //     text: newMessage.value,
-  //     sender: "user",
-  //     timeStamp: "just now",
-  //   })
-  //   newMessage.value = ""
-  //   // Simulate a friend reply
-  //   setTimeout(() => {
-  //     messages.value.push({
-  //       text: "That sounds great!",
-  //       sender: "friend",
-  //       timeStamp: "just now",
-  //       name: "TXO Operations",
-  //     })
-  //   }, 1000)
-  // }
+  if (newMessage.value.trim() !== "") {
+    messages.value.push({
+      text: newMessage.value,
+      sender: "user",
+      timeStamp: "just now",
+    })
+    newMessage.value = ""
+    // Simulate a friend reply
+    setTimeout(() => {
+      messages.value.push({
+        text: "That sounds great!",
+        sender: "friend",
+        timeStamp: "just now",
+        name: "TXO Operations",
+      })
+    }, 1000)
+  }
 }
 
-
-onMounted(() => {
-  socket.value = io('http://localhost:5000')
-  console.log('socket.value', socket.value)
-})
-
-onBeforeUnmount(() => {
-  console.log('DISCONNECTED')
-  socket.value?.disconnect()
-
-})
 </script>
 
 <template>
@@ -123,22 +117,18 @@ onBeforeUnmount(() => {
     <div class="absolute bottom-0 left-0 w-full h-[88px] mt-4 bg-white z-1 border-t pt-3.5 px-6 rounded-b-2xl">
       <div class="flex items-center space-x-2 bg-white border p-2 pl-3 rounded-xl">
         <!-- Attatchment icon -->
-        <!-- <span class="h-6 w-6 rounded-sm bg-[#F5FDFF] flex items-center justify-center">
+        <span class="h-6 w-6 rounded-sm bg-[#F5FDFF] flex items-center justify-center">
           <Icon name="attach" />
-        </span> -->
+        </span>
 
         <!-- message field -->
-        <!-- <input v-model="newMessage" type="text" placeholder="Type your message..."
-          class="flex-grow px-4 py-2 border-none focus:outline-none focus:border-none" /> -->
-        <!-- username -->
-        <input v-model="state.username" type="text" placeholder="Enter username"
+        <input v-model="newMessage" type="text" placeholder="Type your message..."
           class="flex-grow px-4 py-2 border-none focus:outline-none focus:border-none" />
 
-
         <!-- send btn -->
-        <button @click="onSubmit" class="px-4 py-1 text-sm rounded-lg font-medium text-white bg-blue-500"
-          :class="!state.username && 'cursor-not-allowed !bg-blue-300'" :disabled="!state.username">
-          submit
+        <button @click="sendMessage">
+          sensd
+          <Icon name="messages-send" class="!text-white" />
         </button>
       </div>
     </div>
