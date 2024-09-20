@@ -20,7 +20,7 @@ import ChatsPage from '../components/Chats/index.vue'
 </script>
 
 <template>
-    <div class="min-h-[100vh] py-6 w-96 mx-auto ">
+    <div class="min-h-[100vh] py-6 ">
         <ChatsPage />
     </div>
 </template>
